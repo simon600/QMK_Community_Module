@@ -31,6 +31,7 @@ void get_unique_identifier(void);
 void led_streaming(uint8_t *data);
 void signalrgb_mode_enable(void);
 void signalrgb_mode_disable(void);
+bool signalrgb_is_enabled(void);
 void get_total_leds(void);
 void signalrgb_mask_key(uint8_t index);
 void signalrgb_unmask_key(uint8_t index);
