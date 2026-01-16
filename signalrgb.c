@@ -29,7 +29,6 @@ ASSERT_COMMUNITY_MODULES_MIN_API_VERSION(1,0,0);
 #endif
 
 static bool srgb_locked_leds[256] = {0};
-static bool signalrgb_enabled = false;
 uint8_t packet[32];
 
 void get_qmk_version(void) //Grab the QMK Version the board's firmware is built off of
@@ -64,10 +63,6 @@ void get_unique_identifier(void) //Grab the unique identifier for each specific 
 
 void led_streaming(uint8_t *data) //Stream data from HID Packets to Keyboard.
 {
-    if (!signalrgb_enabled) {
-        return;
-    }
-    
     uint8_t index = data[1];
     uint8_t numberofleds = data[2]; 
     #if defined(RGBLIGHT_ENABLE)
@@ -155,12 +150,14 @@ void signalrgb_unmask_key(uint8_t index) {
     srgb_locked_leds[index] = false;
 }
 
+void signalrgb_sync_mask(const bool *mask) {
+    for (uint16_t i = 0; i < 256; i++) {
+        srgb_locked_leds[i] = mask[i];
+    }
+}
+
 void signalrgb_mode_enable(void)
 {
-    if (signalrgb_enabled) {
-        return;
-    }
-    signalrgb_enabled = true;
     #if defined(RGB_MATRIX_ENABLE)
     rgb_matrix_mode_noeeprom(RGB_MATRIX_CUSTOM_SIGNALRGB); //Set RGB Matrix to SignalRGB Compatible Mode
     #endif
@@ -168,20 +165,11 @@ void signalrgb_mode_enable(void)
 
 void signalrgb_mode_disable(void)
 {
-    if (!signalrgb_enabled) {
-        return;
-    }
-    signalrgb_enabled = false;
     #if defined(RGBLIGHT_ENABLE)
     rgblight_reload_from_eeprom();
     #elif defined(RGB_MATRIX_ENABLE)
     rgb_matrix_reload_from_eeprom(); //Reloading last effect from eeprom
     #endif
-}
-
-bool signalrgb_is_enabled(void)
-{
-    return signalrgb_enabled;
 }
 
 void get_total_leds(void)//Grab total number of leds that a board has.
@@ -229,6 +217,8 @@ bool srgb_raw_hid_rx(uint8_t *data, uint8_t length) {
 
         case SET_SIGNALRGB_MODE_ENABLE: 
 
+        // Don't allow HID to enable if user manually disabled
+        // (This is handled in keymap.c via external flag check)
         signalrgb_mode_enable();
 
         break;

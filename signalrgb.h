@@ -31,10 +31,10 @@ void get_unique_identifier(void);
 void led_streaming(uint8_t *data);
 void signalrgb_mode_enable(void);
 void signalrgb_mode_disable(void);
-bool signalrgb_is_enabled(void);
 void get_total_leds(void);
 void signalrgb_mask_key(uint8_t index);
 void signalrgb_unmask_key(uint8_t index);
+void signalrgb_sync_mask(const bool *mask);
 
 //Changelogs for Firmware Versions------------------------------------
 //V1.0.1 added detection for the total number of LEDs a board has. Plugins need a rewrite to make use of this change. Rewritten plugins will not function with older firmware.
