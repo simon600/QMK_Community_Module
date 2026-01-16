@@ -28,6 +28,7 @@ ASSERT_COMMUNITY_MODULES_MIN_API_VERSION(1,0,0);
     #error "At least one of RGBLIGHT_ENABLE or RGB_MATRIX_ENABLE must be defined!"
 #endif
 
+static bool srgb_locked_leds[256] = {0};
 uint8_t packet[32];
 
 void get_qmk_version(void) //Grab the QMK Version the board's firmware is built off of
@@ -128,6 +129,10 @@ void led_streaming(uint8_t *data) //Stream data from HID Packets to Keyboard.
 
       } else {
 
+        if (srgb_locked_leds[index + i]) {
+            continue;
+        }
+
       #if defined(RGBLIGHT_ENABLE)
       rgblight_setrgb_at(r, g, b, index + i);
       #elif defined(RGB_MATRIX_ENABLE)
@@ -135,6 +140,14 @@ void led_streaming(uint8_t *data) //Stream data from HID Packets to Keyboard.
       #endif
         }
      }
+}
+
+void signalrgb_mask_key(uint8_t index) {
+    srgb_locked_leds[index] = true;
+}
+
+void signalrgb_unmask_key(uint8_t index) {
+    srgb_locked_leds[index] = false;
 }
 
 void signalrgb_mode_enable(void)
