@@ -217,8 +217,6 @@ bool srgb_raw_hid_rx(uint8_t *data, uint8_t length) {
 
         case SET_SIGNALRGB_MODE_ENABLE: 
 
-        // Don't allow HID to enable if user manually disabled
-        // (This is handled in keymap.c via external flag check)
         signalrgb_mode_enable();
 
         break;
