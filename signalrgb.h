@@ -13,16 +13,14 @@ enum signalrgb_commands {
 
 enum signalrgb_responses { PROTOCOL_VERSION_BYTE_1 = 1, PROTOCOL_VERSION_BYTE_2 = 0, PROTOCOL_VERSION_BYTE_3 = 6, DEVICE_UNIQUE_IDENTIFIER_BYTE_1 = 0, DEVICE_UNIQUE_IDENTIFIER_BYTE_2 = 0, DEVICE_UNIQUE_IDENTIFIER_BYTE_3 = 0, FIRMWARE_TYPE_BYTE = 2, DEVICE_ERROR_LED_BOUNDS = 253, DEVICE_ERROR_LED_COUNT = 254 };
 
-void get_qmk_version(void);
-void get_signalrgb_protocol_version(void);
-void get_unique_identifier(void);
-void led_streaming(uint8_t *data);
-void signalrgb_mode_enable(void);
-void signalrgb_mode_disable(void);
-void get_total_leds(void);
-void signalrgb_mask_key(uint8_t index);
-void signalrgb_unmask_key(uint8_t index);
-void signalrgb_sync_mask(const bool *mask);
+void      get_qmk_version(void);
+void      get_signalrgb_protocol_version(void);
+void      get_unique_identifier(void);
+void      led_streaming(uint8_t *data);
+void      signalrgb_mode_enable(void);
+void      signalrgb_mode_disable(void);
+void      get_total_leds(void);
+rgb_led_t signalrgb_get_color(uint8_t index);
 
 // Changelogs for Firmware Versions------------------------------------
 // V1.0.1 added detection for the total number of LEDs a board has. Plugins need a rewrite to make use of this change. Rewritten plugins will not function with older firmware.
