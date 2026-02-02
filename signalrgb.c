@@ -29,7 +29,7 @@ static const uint8_t RGBMATRIX_END = RGB_MATRIX_LED_COUNT;
 #endif
 
 #ifdef SIGNALRGB_USE_BUFFER
-static rgb_led_t srgb_led_buffer[TOTAL_LEDS] = {0};
+rgb_led_t srgb_led_buffer[TOTAL_LEDS] = {0};
 #endif
 uint8_t packet[32];
 

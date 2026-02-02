@@ -22,6 +22,10 @@ void      signalrgb_mode_disable(void);
 void      get_total_leds(void);
 rgb_led_t signalrgb_get_color(uint8_t index);
 
+#ifdef SIGNALRGB_USE_BUFFER
+extern rgb_led_t srgb_led_buffer[];
+#endif
+
 // Changelogs for Firmware Versions------------------------------------
 // V1.0.1 added detection for the total number of LEDs a board has. Plugins need a rewrite to make use of this change. Rewritten plugins will not function with older firmware.
 // V1.0.2 added another detection byte for which fork of SignalRGB firmware device is running. This means we can keep overlap Unique Identifiers between Sonix and Mainline.
