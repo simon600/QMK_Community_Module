@@ -28,10 +28,8 @@ static const uint8_t RGBMATRIX_END = RGB_MATRIX_LED_COUNT;
 #    error "At least one of RGBLIGHT_ENABLE or RGB_MATRIX_ENABLE must be defined!"
 #endif
 
-#ifdef SIGNALRGB_USE_BUFFER
 rgb_led_t srgb_led_buffer[TOTAL_LEDS] = {0};
-#endif
-uint8_t packet[32];
+uint8_t   packet[32];
 
 void get_qmk_version(void) // Grab the QMK Version the board's firmware is built off of
 {
@@ -119,30 +117,13 @@ void led_streaming(uint8_t *data) // Stream data from HID Packets to Keyboard.
 #endif
 
         if (isIndicator) {
-#ifdef SIGNALRGB_USE_BUFFER
             if ((index + i) < TOTAL_LEDS) {
                 srgb_led_buffer[index + i] = (rgb_led_t){255, 255, 255};
             }
-#else
-#    if defined(RGBLIGHT_ENABLE)
-            rgblight_setrgb_at(255, 255, 255, index + i);
-#    elif defined(RGB_MATRIX_ENABLE)
-            rgb_matrix_set_color(index + i, 255, 255, 255);
-#    endif
-#endif
-
         } else {
-#ifdef SIGNALRGB_USE_BUFFER
             if ((index + i) < TOTAL_LEDS) {
                 srgb_led_buffer[index + i] = (rgb_led_t){r, g, b};
             }
-#else
-#    if defined(RGBLIGHT_ENABLE)
-            rgblight_setrgb_at(r, g, b, index + i);
-#    elif defined(RGB_MATRIX_ENABLE)
-            rgb_matrix_set_color(index + i, r, g, b);
-#    endif
-#endif
         }
     }
 }
@@ -250,12 +231,3 @@ void raw_hid_receive(uint8_t *data, uint8_t length) {
 }
 #    endif
 #endif
-
-rgb_led_t signalrgb_get_color(uint8_t index) {
-#ifdef SIGNALRGB_USE_BUFFER
-    if (index < TOTAL_LEDS) {
-        return srgb_led_buffer[index];
-    }
-#endif
-    return (rgb_led_t){0, 0, 0};
-}
