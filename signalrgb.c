@@ -14,6 +14,7 @@ ASSERT_COMMUNITY_MODULES_MIN_API_VERSION(1, 0, 0);
 #include "signalrgb.h"
 #include "color.h"
 #include "raw_hid.h"
+#include "print.h"
 
 #if defined(RGBLIGHT_ENABLE) && defined(RGB_MATRIX_ENABLE)
 #    define TOTAL_LEDS (RGBLIGHT_LED_COUNT + RGB_MATRIX_LED_COUNT)
@@ -69,12 +70,14 @@ void led_streaming(uint8_t *data) // Stream data from HID Packets to Keyboard.
 #elif defined(RGB_MATRIX_ENABLE)
     if (index + numberofleds > RGB_MATRIX_LED_COUNT) {
 #endif
+        uprintf("[SRGB] LED bounds error: idx=%d cnt=%d\n", index, numberofleds);
         packet[1] = DEVICE_ERROR_LED_BOUNDS;
         raw_hid_send(packet, 32);
         return;
     }
 
     if (numberofleds >= 10) {
+        uprintf("[SRGB] LED count error: cnt=%d\n", numberofleds);
         packet[1] = DEVICE_ERROR_LED_COUNT;
         raw_hid_send(packet, 32);
         return;
@@ -130,14 +133,17 @@ void led_streaming(uint8_t *data) // Stream data from HID Packets to Keyboard.
 
 void signalrgb_mode_enable(void) {
 #if defined(RGB_MATRIX_ENABLE)
+    uprintf("[SRGB] Mode ENABLE (RGB_MATRIX_CUSTOM_SIGNALRGB)\n");
     rgb_matrix_mode_noeeprom(RGB_MATRIX_CUSTOM_SIGNALRGB); // Set RGB Matrix to SignalRGB Compatible Mode
 #endif
 }
 
 void signalrgb_mode_disable(void) {
 #if defined(RGBLIGHT_ENABLE)
+    uprintf("[SRGB] Mode DISABLE (reload rgblight)\n");
     rgblight_reload_from_eeprom();
 #elif defined(RGB_MATRIX_ENABLE)
+    uprintf("[SRGB] Mode DISABLE (reload rgb_matrix from eeprom)\n");
     rgb_matrix_reload_from_eeprom(); // Reloading last effect from eeprom
 #endif
 }
@@ -165,51 +171,43 @@ void get_firmware_type(void) // Grab which fork of qmk a board is running.
 bool srgb_raw_hid_rx(uint8_t *data, uint8_t length) {
     switch (data[0]) {
         case GET_QMK_VERSION:
-
+            uprintf("[SRGB] RX: GET_QMK_VERSION\n");
             get_qmk_version();
-
             break;
         case GET_PROTOCOL_VERSION:
-
+            uprintf("[SRGB] RX: GET_PROTOCOL_VERSION\n");
             get_signalrgb_protocol_version();
-
             break;
         case GET_UNIQUE_IDENTIFIER:
-
+            uprintf("[SRGB] RX: GET_UNIQUE_IDENTIFIER\n");
             get_unique_identifier();
-
             break;
         case STREAM_RGB_DATA:
-
             led_streaming(data);
-
             break;
 
         case SET_SIGNALRGB_MODE_ENABLE:
-
+            uprintf("[SRGB] RX: SET_MODE_ENABLE\n");
             signalrgb_mode_enable();
-
             break;
 
         case SET_SIGNALRGB_MODE_DISABLE:
-
+            uprintf("[SRGB] RX: SET_MODE_DISABLE\n");
             signalrgb_mode_disable();
-
             break;
 
         case GET_TOTAL_LEDS:
-
+            uprintf("[SRGB] RX: GET_TOTAL_LEDS\n");
             get_total_leds();
-
             break;
 
         case GET_FIRMWARE_TYPE:
-
+            uprintf("[SRGB] RX: GET_FIRMWARE_TYPE\n");
             get_firmware_type();
-
             break;
 
         default:
+            uprintf("[SRGB] RX: unknown cmd=0x%02X\n", data[0]);
             return false;
     }
     return true;
