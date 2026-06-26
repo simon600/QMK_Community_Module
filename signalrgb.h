@@ -20,6 +20,7 @@ void led_streaming(uint8_t *data);
 void signalrgb_mode_enable(void);
 void signalrgb_mode_disable(void);
 void get_total_leds(void);
+uint8_t signalrgb_get_max_brightness(void);
 
 extern rgb_led_t srgb_led_buffer[];
 

@@ -154,6 +154,22 @@ void get_total_leds(void) // Grab total number of leds that a board has.
     raw_hid_send(packet, 32);
 }
 
+uint8_t signalrgb_get_max_brightness(void) {
+    uint8_t max_val = 0;
+    for (uint8_t i = 0; i < TOTAL_LEDS; i++) {
+        if (srgb_led_buffer[i].r > max_val) {
+            max_val = srgb_led_buffer[i].r;
+        }
+        if (srgb_led_buffer[i].g > max_val) {
+            max_val = srgb_led_buffer[i].g;
+        }
+        if (srgb_led_buffer[i].b > max_val) {
+            max_val = srgb_led_buffer[i].b;
+        }
+    }
+    return max_val;
+}
+
 void get_firmware_type(void) // Grab which fork of qmk a board is running.
 {
     packet[0] = GET_FIRMWARE_TYPE;
